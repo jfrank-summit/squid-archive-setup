@@ -21,9 +21,9 @@ services:
       - REDIS_URI=redis://redis:6379/0
       - FORCE_HEIGHT=true
       - BLOCK_HEIGHT=0 # starting block height
-      - WS_PROVIDER_ENDPOINT_URI=ws://host.docker.internal:9944 # if running a local node connected to testnet, which indexes much more quickly
-      # uncomment next line and comment above if not running local node
-      # - WS_PROVIDER_ENDPOINT_URI=wss://testnet.creditcoin.network
+      # uncomment next line and comment below if running local node
+      # - WS_PROVIDER_ENDPOINT_URI=ws://host.docker.internal:9944 # if running a local node connected to testnet, which indexes much more quickly
+      - WS_PROVIDER_ENDPOINT_URI=wss://testnet.creditcoin.network
     depends_on:
       - db
       - redis
