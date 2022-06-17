@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
   indexer:
-    image: nathanwhit/hydra-indexer:5
+    image: nathanwhit/hydra-indexer:6
     restart: unless-stopped
     environment:
       - WORKERS_NUMBER=50
@@ -32,7 +32,7 @@ services:
     ports:
       - 9091:9090
   indexer-gateway:
-    image: nathanwhit/hydra-indexer-gateway:5
+    image: nathanwhit/hydra-indexer-gateway:10
     restart: unless-stopped
     depends_on:
       - redis
