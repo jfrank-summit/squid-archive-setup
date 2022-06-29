@@ -25,13 +25,13 @@ services:
       "--out", "postgres://root:postgres@archive-db:5432/postgres",
     ]
   gateway:
-    image: nathanwhit/squid-archive-gateway:dev
+    image: tmcgroul/archive-gateway:32
     depends_on:
       - archive-db
       - ingest
     command: [
       "--database-url", "postgres://root:postgres@archive-db:5432/postgres",
-      "--database-max-connections", "5",
+      "--database-max-connections", "10",
     ]
     environment:
       RUST_LOG: actix_web=info,actix_server=info
