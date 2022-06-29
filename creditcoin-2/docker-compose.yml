@@ -1,0 +1,39 @@
+version: "3.4"
+services:
+  archive-db:
+    image: postgres:12
+    restart: always
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "${ARCHIVE_DB_PORT:-5433}:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  ingest:
+    image: nathanwhit/squid-ingest:dev
+    depends_on:
+      archive-db:
+        condition: service_healthy
+    command: [
+      "--endpoint", "${CHAIN_ENDPOINT:-ws://host.docker.internal:9944}",
+      "--out", "postgres://root:postgres@archive-db:5432/postgres",
+    ]
+  gateway:
+    image: nathanwhit/squid-archive-gateway:dev
+    depends_on:
+      - archive-db
+      - ingest
+    command: [
+      "--database-url", "postgres://root:postgres@archive-db:5432/postgres",
+      "--database-max-connections", "5",
+    ]
+    environment:
+      RUST_LOG: actix_web=info,actix_server=info
+    ports:
+      - "${ARCHIVE_PORT:-8000}:8000"
