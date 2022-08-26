@@ -16,21 +16,23 @@ services:
       timeout: 5s
       retries: 5
   ingest:
-    image: nathanwhit/squid-ingest:dev
+    image: jeremyfrank/substrate-ingest:3
     depends_on:
       archive-db:
         condition: service_healthy
+    environment:
+      BLOCK_DELAY: 2
     command: [
-      "--endpoint", "${CHAIN_ENDPOINT:-ws://host.docker.internal:9944}",
-      "--out", "postgres://root:postgres@archive-db:5432/postgres",
+      "--endpoint", "${CHAIN_ENDPOINT:-wss://rpc.mainnet.creditcoin.network/ws}",
+      "--out", "postgres://root:postgres@archive-db:5432/archive",
     ]
   gateway:
-    image: tmcgroul/archive-gateway:32
+    image: subsquid/substrate-gateway:2.1.2
     depends_on:
       - archive-db
       - ingest
     command: [
-      "--database-url", "postgres://root:postgres@archive-db:5432/postgres",
+      "--database-url", "postgres://root:postgres@archive-db:5432/archive",
       "--database-max-connections", "10",
     ]
     environment:
